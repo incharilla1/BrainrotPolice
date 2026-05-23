@@ -24,7 +24,7 @@ return function(section)
                 task.wait()
                 dashev:FireServer(3)
 
-                task.wait(5)
+                task.wait()
                 
                 local bestArea = speedWalls.SpeedWall_1
                 for _, v in pairs(speedWalls:GetChildren()) do
@@ -35,7 +35,16 @@ return function(section)
                 end
 
                 local char = plr.Character
-                char:MoveTo(bestArea.Position - Vector3.new(0, 500, 0))
+                local moveFinished = false
+                local func = char.Humanoid.MoveToFinished:Connect(function(reached)
+                    moveFinished = true
+                end)
+
+                char.Humanoid:MoveTo(bestArea.Position - Vector3.new(0, 500, 0))
+
+                repeat task.wait() until moveFinished
+                func:Disconnect()
+
                 task.wait(1)
                 dashev:FireServer("EndWarp")
 
