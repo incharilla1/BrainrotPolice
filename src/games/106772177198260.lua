@@ -1,4 +1,5 @@
 return function(section)
+    print("reached with king", section)
     local elements = loadstring(game:HttpGet(getgitpath("src").."elements.lua"))()
 
     local repStorage = game:GetService("ReplicatedStorage")
@@ -15,6 +16,8 @@ return function(section)
                 )
                 task.wait(0.1)
             end
+        else
+            getgenv().Farming = false
         end
     end)
 end
