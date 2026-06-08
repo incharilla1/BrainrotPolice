@@ -1,6 +1,6 @@
 # whoop whoop cuz its the brainrot police 🚓🚓🚓
 To suggest games, report bugs, etc. Join https://discord.gg/vaehz
-## Last update: 04/06/2026 {DD/MM/YYYY}
+## Last update: 08/06/2026 {DD/MM/YYYY}
 
 This is an open source little project I made for a bunch of shitty brainrot games. Don't take it too serious lads
 
