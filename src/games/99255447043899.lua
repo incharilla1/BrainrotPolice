@@ -20,25 +20,27 @@ return function(section, data)
         if not v then return end
 
         while env.Farming do
-            firetouchinterest(plr.Character.Head, runTrigger, true)
-            task.wait()
-            firetouchinterest(plr.Character.Head, runTrigger, false)
-            task.wait(0.5)
-            plr.Character:MoveTo(Vector3.new(46, 4, -1816))
-            local firstbr
-            repeat
-                firstbr = workspace.Locations.End.Brainrots:FindFirstChildOfClass("Model")
+            pcall(function()
+                firetouchinterest(plr.Character.Head, runTrigger, true)
                 task.wait()
-            until firstbr
+                firetouchinterest(plr.Character.Head, runTrigger, false)
+                task.wait(0.5)
+                plr.Character:MoveTo(Vector3.new(46, 4, -1816))
+                local firstbr
+                repeat
+                    firstbr = workspace.Locations.End.Brainrots:FindFirstChildOfClass("Model")
+                    task.wait()
+                until firstbr
 
-            plr.Character:MoveTo(firstbr.PrimaryPart.Position)
-            task.wait()
-            repeat
-                fireproximityprompt(firstbr.PrimaryPart.ProximityPrompt)
+                plr.Character:MoveTo(firstbr.PrimaryPart.Position)
                 task.wait()
-            until not firstbr or firstbr.Parent ~= workspace.Locations.End.Brainrots
-            task.wait()
-            plr.Character:MoveTo(workspace.EscapeHitbox.Position)
+                repeat
+                    fireproximityprompt(firstbr.PrimaryPart.ProximityPrompt)
+                    task.wait()
+                until not firstbr or firstbr.Parent ~= workspace.Locations.End.Brainrots
+                task.wait()
+                plr.Character:MoveTo(workspace.EscapeHitbox.Position)
+            end)
             task.wait(1)
         end
     end)
