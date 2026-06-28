@@ -1,13 +1,29 @@
--- +1 Magic Evolution
 return function(section, data)
+
+    local elements = loadstring(game:HttpGet(getgitpath("src").."elements.lua"))()
+
     local players = game:GetService("Players")
     local replicatedstorage = game:GetService("ReplicatedStorage")
     local httpservice = game:GetService("HttpService")
 
-    local player = players.LocalPlayer
+    local plr = players.LocalPlayer
+
+    getgenv().tp = false
+    getgenv().train = false
+    getgenv().staff = false
+    getgenv().rebirth = false
+
+    local setdata = data[tostring(game.PlaceId)] or {}
+    setdata.tp = setdata.tp or false
+    setdata.train = setdata.train or false
+    setdata.staff = setdata.staff or false
+    setdata.rebirth = setdata.rebirth or false
+    data[tostring(game.PlaceId)] = setdata
+
+    writefile("BrainrotPolice/Config.json", httpservice:JSONEncode(data))
 
     local function get_character()
-        return player.Character or player.CharacterAdded:Wait()
+        return plr.Character or plr.CharacterAdded:Wait()
     end
 
     local function get_root()
@@ -26,84 +42,96 @@ return function(section, data)
     end
 
     local function get_staff()
-        local staff_buttons = workspace:FindFirstChild("StaffButtons")
-        local staff_button_20 = staff_buttons and staff_buttons["Staff Button20"]
-        return staff_button_20 and staff_button_20:FindFirstChild("TouchPart")
+        local staffbuttons = workspace:FindFirstChild("StaffButtons")
+        local staffbutton20 = staffbuttons and staffbuttons["Staff Button20"]
+        return staffbutton20 and staffbutton20:FindFirstChild("TouchPart")
     end
 
-    local elements = loadstring(game:HttpGet(getgitpath("src") .. "elements.lua"))()
+    elements:Toggle("INF WINS", section, setdata.tp, function(ison)
+        getgenv().setconfig("tp", ison)
+        if ison then
+            getgenv().tp = true
+            task.spawn(function()
+                while getgenv().tp do
+                    local target = get_target()
+                    local character = get_character()
+                    local root = get_root()
 
-    getgenv().tp = getgenv().tp or false
-    getgenv().train = getgenv().train or false
-    getgenv().staff = getgenv().staff or false
-    getgenv().rebirth = getgenv().rebirth or false
-
-    local place_data = data[tostring(game.PlaceId)] or {}
-    data[tostring(game.PlaceId)] = place_data
-    httpservice:JSONEncode(data)
-
-    elements:Toggle("Auto Win", section, getgenv().tp, function(v)
-        getgenv().tp = v
-        local target = get_target()
-
-        if v and target then
-            while getgenv().tp do
-                local root = get_root()
-                local character = get_character()
-
-                if root and character and target then
-                    local pivot = target:GetPivot()
-                    character:PivotTo(CFrame.new(pivot.Position + Vector3.new(0, 2, 0)))
+                    if target and character and root then
+                        local pivot = target:GetPivot()
+                        character:PivotTo(CFrame.new(pivot.Position + Vector3.new(0, 2, 0)))
+                    end
+                    task.wait()
                 end
-
-                task.wait()
-            end
+            end)
+        else
+            getgenv().tp = false
         end
     end)
 
-    elements:Toggle("Auto Train", section, getgenv().train, function(v)
-        getgenv().train = v
-        local remotes = get_remotes()
-        local gain = remotes and remotes:FindFirstChild("GainMagicPower")
+    elements:Toggle("Auto Train", section, setdata.train, function(ison)
+        getgenv().setconfig("train", ison)
+        if ison then
+            getgenv().train = true
+            task.spawn(function()
+                local remotes = get_remotes()
+                local gain = remotes and remotes:FindFirstChild("GainMagicPower")
 
-        if v and gain then
-            while getgenv().train do
-                pcall(function()
-                    gain:FireServer()
-                end)
-                task.wait()
-            end
-        end
-    end)
-
-    elements:Toggle("Equip Best Staff", section, getgenv().staff, function(v)
-        getgenv().staff = v
-        if v then
-            while getgenv().staff do
-                local root = get_root()
-                local touch = get_staff()
-
-                if root and touch then
-                    touch.CFrame = root.CFrame * CFrame.new(0, 0, -3)
+                while getgenv().train do
+                    if gain then
+                        pcall(function()
+                            gain:FireServer()
+                        end)
+                    end
+                    task.wait()
                 end
-
-                task.wait()
-            end
+            end)
+        else
+            getgenv().train = false
         end
     end)
 
-    elements:Toggle("Auto Rebirth", section, getgenv().rebirth, function(v)
-        getgenv().rebirth = v
-        local remotes = get_remotes()
-        local rebirth = remotes and remotes:FindFirstChild("Rebirth")
+    elements:Toggle("Equip Best Staff", section, setdata.staff, function(ison)
+        getgenv().setconfig("staff", ison)
+        if ison then
+            getgenv().staff = true
+            task.spawn(function()
+                while getgenv().staff do
+                    local root = get_root()
+                    local touch = get_staff()
 
-        if v and rebirth then
-            while getgenv().rebirth do
-                pcall(function()
-                    rebirth:FireServer()
-                end)
-                task.wait()
-            end
+                    if root and touch then
+                        touch.CFrame = root.CFrame * CFrame.new(0, 0, -3)
+                    end
+
+                    task.wait()
+                end
+            end)
+        else
+            getgenv().staff = false
         end
     end)
+
+    elements:Toggle("Auto Rebirth", section, setdata.rebirth, function(ison)
+        getgenv().setconfig("rebirth", ison)
+        if ison then
+            getgenv().rebirth = true
+            task.spawn(function()
+                local remotes = get_remotes()
+                local rebirth = remotes and remotes:FindFirstChild("Rebirth")
+
+                while getgenv().rebirth do
+                    if rebirth then
+                        pcall(function()
+                            rebirth:FireServer()
+                        end)
+                    end
+                    task.wait()
+                end
+            end)
+        else
+            getgenv().rebirth = false
+        end
+    end)
+
 end
